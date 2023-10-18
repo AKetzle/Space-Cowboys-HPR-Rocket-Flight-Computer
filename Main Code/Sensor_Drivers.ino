@@ -438,6 +438,7 @@ void getBaro() {
 */
 bool beginADXL375() {
 	#define ADXL375_ADDRESS (0x53) // I2C address
+	#define ADXL375_REGISTER_BW_RATE (0x2C) // data rate settings
 	#define ADXL375_REGISTER_POWER_CTL (0x2D) // on-sensor register for managing power settings
 	accelbus.i2cRate = 400000; // I2C clock speed in Hz (fSCL on datasheet)
 	accelbus.i2cAddress = ADXL375_ADDRESS;
@@ -446,7 +447,8 @@ bool beginADXL375() {
 		Serial.println(F("ERROR: ADXL375 Accelerometer not found!"));
 		return false;
 	}
-	
+	write8(ADXL375_REGISTER_BW_RATE, 0b00001110); // sets output data rate to 1600 Hz (800 Hz bandwidth, 90 uA current)
+	accel.timeBtwnSamp = 625UL;
 }
 
 //***************************************************************************
