@@ -547,7 +547,7 @@ boolean beginLSM303_M() {
   return true;
 }//end beginLSM303_M
 
-void getLSM303_A() {ttt
+void getLSM303_A() {
 
   #define LSM303_REGISTER_ACCEL_OUT_X_L_A  (0x28)
   
