@@ -436,7 +436,18 @@ void getBaro() {
 /*
 	ADXL375 accelerometer, +- 200G accelerometer via I2C
 */
-
+bool beginADXL375() {
+	#define ADXL375_ADDRESS (0x53) // I2C address
+	#define ADXL375_REGISTER_POWER_CTL (0x2D) // on-sensor register for managing power settings
+	accelbus.i2cRate = 400000; // I2C clock speed in Hz (fSCL on datasheet)
+	accelbus.i2cAddress = ADXL375_ADDRESS;
+	startI2C(&accelBus, sensors.accelBusNum); // it needs to be started on I2C
+	if(!testSensor(ADXL375_ADDRESS)) { // test if it's present
+		Serial.println(F("ERROR: ADXL375 Accelerometer not found!"));
+		return false;
+	}
+	
+}
 
 //***************************************************************************
 //LSM303 Accelerometer, which has a different address from the magnetometer
@@ -449,7 +460,7 @@ bool beginLSM303_A() {
 #define LSM303_REGISTER_ACCEL_CTRL_REG1_A  (0x20) // axis settings
 
   //Define bus settings and start bus- ONLY I2C for LSM303!!
-  accelBus.i2cRate = 400000; // I2C speed in Hz
+  accelBus.i2cRate = 400000; // I2C speed in Hz (fSCL in the datasheet)
   accelBus.i2cAddress = LSM303_ADDRESS_ACCEL;
   startI2C(&accelBus, sensors.accelBusNum);
 
@@ -460,7 +471,7 @@ bool beginLSM303_A() {
 
   //check whoami
   byte id = read8(LSM303_REGISTER_ACCEL_CTRL_REG1_A | 0x80);
-  if (id != 0x07) {
+  if (id != 0x07) { // checks if sensor axis are turned on
     Serial.println(F("LSM303 Accelerometer not found!"));
     return false;}
   Serial.println(F("Accel: LSM303 OK!"));
@@ -469,14 +480,15 @@ bool beginLSM303_A() {
   //CONFIGURE ACCELEROMETER
   //----------------------
   //set max ADC value
-  accel.ADCmax = (int)(0.98 * 2048); // accel is a type SensorData defined in HPR_Rocket_Flight_PC_V4_6.ino
+  accel.ADCmax = (int)(0.98 * 2048); // accel is a type SensorData defined in HPR_Rocket_Flight_PC_V4_6.ino, this value is referenced in line 1868
+  //ADCmax is used to see if the measured value is at the G-limit. irrelevant for accelerometers with a large range (well above max flight acceleration)
 
   //Set accelerometer to 1300Hz ODR
-  write8(LSM303_REGISTER_ACCEL_CTRL_REG1_A, 0b10010111);
+  write8(LSM303_REGISTER_ACCEL_CTRL_REG1_A, 0b10010111); // sets it to the highest output rate 
   accel.timeBtwnSamp = 769UL;
 
   //Set 16G Range
-  write8(LSM303_REGISTER_ACCEL_CTRL_REG4_A, 0b00111000);
+  write8(LSM303_REGISTER_ACCEL_CTRL_REG4_A, 0b00111000); // sets scale and high resolution mode
   accel.gainX = accel.gainY = accel.gainZ = 0.012;
 
   //set G level and
