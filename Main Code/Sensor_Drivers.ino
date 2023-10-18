@@ -431,18 +431,25 @@ void getBaro() {
   }
 }
 
+
+
+/*
+	ADXL375 accelerometer, +- 200G accelerometer via I2C
+*/
+
+
 //***************************************************************************
 //LSM303 Accelerometer, which has a different address from the magnetometer
 //***************************************************************************
 
 bool beginLSM303_A() {
 
-#define LSM303_ADDRESS_ACCEL               (0x32 >> 1)
-#define LSM303_REGISTER_ACCEL_CTRL_REG4_A  (0x23)
-#define LSM303_REGISTER_ACCEL_CTRL_REG1_A  (0x20)
+#define LSM303_ADDRESS_ACCEL               (0x32 >> 1) // I2C address
+#define LSM303_REGISTER_ACCEL_CTRL_REG4_A  (0x23) // data format settings
+#define LSM303_REGISTER_ACCEL_CTRL_REG1_A  (0x20) // axis settings
 
   //Define bus settings and start bus- ONLY I2C for LSM303!!
-  accelBus.i2cRate = 400000;
+  accelBus.i2cRate = 400000; // I2C speed in Hz
   accelBus.i2cAddress = LSM303_ADDRESS_ACCEL;
   startI2C(&accelBus, sensors.accelBusNum);
 
@@ -462,7 +469,7 @@ bool beginLSM303_A() {
   //CONFIGURE ACCELEROMETER
   //----------------------
   //set max ADC value
-  accel.ADCmax = (int)(0.98 * 2048);
+  accel.ADCmax = (int)(0.98 * 2048); // accel is a type SensorData defined in HPR_Rocket_Flight_PC_V4_6.ino
 
   //Set accelerometer to 1300Hz ODR
   write8(LSM303_REGISTER_ACCEL_CTRL_REG1_A, 0b10010111);
