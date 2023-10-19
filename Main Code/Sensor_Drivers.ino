@@ -436,6 +436,7 @@ void getBaro() {
 /*
 	ADXL375 accelerometer, +- 200G accelerometer via I2C
 */
+/* UNUSED FOR TIME BEING
 bool beginADXL375() {
 	#define ADXL375_ADDRESS (0x53) // I2C address
 	#define ADXL375_REGISTER_BW_RATE (0x2C) // data rate settings
@@ -450,6 +451,7 @@ bool beginADXL375() {
 	write8(ADXL375_REGISTER_BW_RATE, 0b00001110); // sets output data rate to 1600 Hz (800 Hz bandwidth, 90 uA current)
 	accel.timeBtwnSamp = 625UL;
 }
+*/
 
 //***************************************************************************
 //LSM303 Accelerometer, which has a different address from the magnetometer
