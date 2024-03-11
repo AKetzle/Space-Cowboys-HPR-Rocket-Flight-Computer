@@ -984,7 +984,7 @@ void setup(void)
 	// if so, then we need to rapidly get the system back up and going
 	// call the rapidReset routine and immediately exit void setup
 	byte lastEvent = EEPROM.read(eeprom.lastEvent);
-	if (lastEvent != 27)
+	if (lastEvent != Touchdown) // touchdown event - see radio event codes enum
 	{
 		EEPROM.update(eeprom.lastEvent, 27);
 		lastEvent = 27;
